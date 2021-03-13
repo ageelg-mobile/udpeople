@@ -44,6 +44,7 @@ jobs:
           name: Build front-end
           command: |
             # Your code here
+            npm run build
             webpack --mode development --progress --colors
             exit 1
       - save_cache:
@@ -61,7 +62,7 @@ jobs:
           name: Back-end build
           command: |
              # Your code here
-             tsc
+             npm run build
              exit 1
       - save_cache:
           paths: [backend/node_modules]
