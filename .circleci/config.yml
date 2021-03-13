@@ -46,9 +46,9 @@ jobs:
       # Your job code here
       - run:
           name: Run tests with JUnit as reporter
-              command: npm run test
-              environment:
-                JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+          command: npm run test
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
   test-backend:
     docker:
@@ -63,9 +63,9 @@ jobs:
       # Your job code here
       - run:
           name: Run tests with JUnit as reporter
-              command: npm run test
-              environment:
-                JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+          command: npm run test
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
   
 
 workflows:
