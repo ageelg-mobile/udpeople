@@ -46,7 +46,9 @@ jobs:
       # Your job code here
       - run:
           name: Run tests with JUnit as reporter
-          command: npm run test
+          command: 
+            cd ~/project/frontend && npm i  
+            npm run test
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
@@ -63,7 +65,9 @@ jobs:
       # Your job code here
       - run:
           name: Run tests with JUnit as reporter
-          command: npm run test
+          command: 
+            cd ~/project/backend && npm i  
+            npm run test
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
   
