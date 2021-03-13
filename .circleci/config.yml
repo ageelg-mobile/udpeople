@@ -12,9 +12,7 @@ jobs:
           name: Build front-end
           command: |            
             cd frontend
-            npm run build
-            npm install --save-dev webpack
-            webpack --mode development --progress --colors
+            npm run build            
             exit 1
       - save_cache:
           paths: [frontend/node_modules]
