@@ -83,7 +83,7 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       # Your job code here
       - run:
-          name: Run tests with JUnit as reporter
+          name: Run frontend scan
           command: |  
             cd ~/project/backend && npm i  
             npm audit --audit-level=critical
@@ -100,7 +100,7 @@ jobs:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       # Your job code here
       - run:
-          name: Run tests with JUnit as reporter
+          name: Run backend scan
           command: |  
             cd ~/project/backend && npm i  
             npm audit --audit-level=critical
