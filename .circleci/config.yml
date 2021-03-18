@@ -1,9 +1,20 @@
 version: 2.1
-           
+
+slack-fail-post-step: &slack-fail-post-step
+  post-steps:
+    - slack/status:
+        fail_only: true
+
+orbs:
+  slack: circleci/slack@3.4.2
+
+default_image: &docker
+  docker:
+    - image: circleci/node:13.8.0
+
 jobs:
-  build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+  build-frontend:    
+    <<: *docker
     steps:
       - checkout
       - restore_cache:
@@ -18,8 +29,7 @@ jobs:
           key: frontend-build
 
   build-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *docker
     steps:
       - checkout
       - restore_cache:
@@ -33,10 +43,9 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
 
-  test-frontend: 
-    docker:
-      # Docker image here
-      - image: circleci/node:13.8.0
+  test-frontend:     
+    # Docker image here
+    <<: *docker
     steps:
       # Checkout code from git
       - checkout
@@ -53,9 +62,8 @@ jobs:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
   test-backend:
-    docker:
-      # Docker image here
-      - image: circleci/node:13.8.0
+    # Docker image here
+    <<: *docker
     steps:
       # Checkout code from git
       - checkout
@@ -72,9 +80,8 @@ jobs:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
   
   scan-frontend:
-    docker:
-      # Docker image here
-      - image: circleci/node:13.8.0
+    # Docker image here
+    <<: *docker
     steps:
       # Checkout code from git
       - checkout
@@ -89,9 +96,8 @@ jobs:
             npm audit --audit-level=critical
 
   scan-backend:
-    docker:
-      # Docker image here
-      - image: circleci/node:13.8.0
+    # Docker image here
+    <<: *docker
     steps:
       # Checkout code from git
       - checkout
@@ -108,12 +114,16 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
+      - build-frontend: *slack-fail-post-step
+      - build-backend: *slack-fail-post-step
       - test-frontend:
           requires: [build-frontend]
+          post-steps:
+            - slack/status
       - test-backend:
           requires: [build-backend]
+          post-steps:
+            - slack/status
       - scan-frontend:
           requires: [build-frontend]
       - scan-backend:
