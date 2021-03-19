@@ -139,17 +139,15 @@ workflows:
   default:
     jobs:
       - build-frontend
+      - notify:
+            context: slack-secrets
       - build-backend
+      - notify:
+            context: slack-secrets
       - test-frontend:
-          requires: [build-frontend]
-          post-steps:
-            - notify:
-                context: slack-secrets
+          requires: [build-frontend]         
       - test-backend:
-          requires: [build-backend]
-          post-steps:
-            - notify:
-                context: slack-secrets
+          requires: [build-backend]        
       - scan-frontend:
           requires: [build-frontend]
       - scan-backend:
