@@ -43,7 +43,13 @@ jobs:
           name: Build front-end
           command: |   
             cd ~/project/frontend && npm i         
-            npm run build    
+            npm run build   
+      - slack/notify:
+          color: '#42e2f4'
+          mentions: 'USERID1,USERID2,'
+          message: This is a custom message notification
+          webhook: webhook
+          when: always
       - slack/status:
           fail_only: 'true'
           mentions: 'USERID1,USERID2'
@@ -64,6 +70,12 @@ jobs:
           command: |      
              cd ~/project/backend && npm i               
              npm run build
+      - slack/notify:
+          color: '#42e2f4'
+          mentions: 'USERID1,USERID2,'
+          message: This is a custom message notification
+          webhook: webhook
+          when: always
       - slack/status:
           fail_only: 'true'
           mentions: 'USERID1,USERID2'
