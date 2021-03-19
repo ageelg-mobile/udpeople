@@ -43,7 +43,12 @@ jobs:
           name: Build front-end
           command: |   
             cd ~/project/frontend && npm i         
-            npm run build           
+            npm run build    
+      - slack/status:
+          fail_only: 'true'
+          mentions: 'USERID1,USERID2'
+          only_for_branch: only_for_branch
+          webhook: webhook     
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -59,6 +64,11 @@ jobs:
           command: |      
              cd ~/project/backend && npm i               
              npm run build
+      - slack/status:
+          fail_only: 'true'
+          mentions: 'USERID1,USERID2'
+          only_for_branch: only_for_branch
+          webhook: webhook
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
