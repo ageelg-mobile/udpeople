@@ -143,11 +143,19 @@ workflows:
       - test-frontend:
           requires: [build-frontend]
           post-steps:
-            - slack/status
+            - slack/status:
+                fail_only: 'true'
+                mentions: 'USERID1,USERID2'
+                only_for_branch: only_for_branch
+                webhook: webhook
       - test-backend:
           requires: [build-backend]
           post-steps:
-            - slack/status
+            - slack/status:
+                fail_only: 'true'
+                mentions: 'USERID1,USERID2'
+                only_for_branch: only_for_branch
+                webhook: webhook
       - scan-frontend:
           requires: [build-frontend]
       - scan-backend:
