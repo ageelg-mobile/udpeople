@@ -170,5 +170,5 @@ workflows:
           requires: [build-backend] 
       - deploy-infrastructure:
            requires:
-             - backend-analyze
+             - scan-backend
       
