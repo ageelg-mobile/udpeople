@@ -2,7 +2,7 @@ version: 2.1
 
 
 orbs:
-  slack: circleci/slack@4.3.1
+  slack: slack/slack@1.0.4
 
 default_image: &docker
   docker:
@@ -140,10 +140,6 @@ jobs:
             npm audit --audit-level=critical
 
 workflows:
-  send-notification:
-    jobs:
-      - notify:
-          context: slack-secrets
   default:
     jobs:
       - build-frontend
