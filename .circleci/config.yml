@@ -46,15 +46,9 @@ jobs:
             npm run build   
       - slack/notify:
           color: '#42e2f4'
-          mentions: 'USERID1,USERID2,'
-          message: This is a custom message notification
+          message: Frontend build failed
           webhook: webhook
-          when: always
-      - slack/status:
-          fail_only: 'true'
-          mentions: 'USERID1,USERID2'
-          only_for_branch: only_for_branch
-          webhook: webhook     
+          when: on_fail      
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -72,15 +66,9 @@ jobs:
              npm run build
       - slack/notify:
           color: '#42e2f4'
-          mentions: 'USERID1,USERID2,'
-          message: This is a custom message notification
+          message: Backend build failed
           webhook: webhook
-          when: always
-      - slack/status:
-          fail_only: 'true'
-          mentions: 'USERID1,USERID2'
-          only_for_branch: only_for_branch
-          webhook: webhook
+          when: on_fail    
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
