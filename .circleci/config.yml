@@ -45,10 +45,9 @@ jobs:
             cd ~/project/frontend && npm i         
             npm run build   
       - slack/notify:
-          color: '#42e2f4'
-          message: Frontend build failed
-          webhook: webhook
-          when: on_fail      
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1    
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -65,10 +64,9 @@ jobs:
              cd ~/project/backend && npm i               
              npm run build
       - slack/notify:
-          color: '#42e2f4'
-          message: Backend build failed
-          webhook: webhook
-          when: on_fail    
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1    
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
