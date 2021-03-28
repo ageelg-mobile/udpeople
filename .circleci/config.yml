@@ -39,9 +39,7 @@ jobs:
           name: Back-end build
           command: |      
               cd ~/project/backend && npm i     
-              npm audit --audit-level=critical    
-              npm run build         
-             # tsc -p tsconfig.build.json
+              tsc -p tsconfig.build.json
       - slack/notify:
           event: fail
           mentions: '@EngineeringTeam'
