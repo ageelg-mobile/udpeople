@@ -115,7 +115,9 @@ jobs:
           command: |  
             cd ~/project/backend && npm i  
             npm audit --audit-level=critical
-
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
 
   deploy-infrastructure:
     docker:
