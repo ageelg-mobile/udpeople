@@ -39,14 +39,16 @@ jobs:
           name: Back-end build
           command: |      
               cd ~/project/backend && npm i     
-              tsc -p tsconfig.build.json
+              npm run build
+            # tsc -p tsconfig.build.json
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
       - slack/notify:
           event: fail
           mentions: '@EngineeringTeam'
           template: basic_fail_1    
-      - save_cache:
-          paths: [backend/node_modules]
-          key: backend-build
+
 
   test-frontend:     
     # Docker image here
@@ -104,7 +106,7 @@ jobs:
     # Docker image here
     <<: *docker
     steps:
-      # Checkout code from git
+      # Checkout code from git 
       - checkout
       # Restore from cache
       - restore_cache:
