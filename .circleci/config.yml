@@ -38,11 +38,8 @@ jobs:
       - run:
           name: Back-end build
           command: |      
-            cd backend &&\
-            npm i &&\
-            npm run build
-           #  cd ~/project/backend && npm i               
-           #   tsc -p tsconfig.build.json
+              cd ~/project/backend && npm i               
+              tsc -p tsconfig.build.json
       - slack/notify:
           event: fail
           mentions: '@EngineeringTeam'
