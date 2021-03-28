@@ -30,7 +30,7 @@ jobs:
           key: frontend-build
 
   build-backend:
-    <<: *docker
+    <<: *docker 
     steps:
       - checkout
       - restore_cache:
