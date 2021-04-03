@@ -126,6 +126,7 @@ jobs:
       - image: amazon/aws-cli
     steps:
       # Checkout code from git
+      - checkout
       - restore_cache:
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
       - run:
@@ -136,7 +137,7 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
-              --template-file backend.yml \
+              --template-file .circleci/files/backend.yml \
               --tags project=udapeople-${CIRCLE_WORKFLOW_ID:0:4} \
               --stack-name backend-${CIRCLE_WORKFLOW_ID:0:4} \
               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:4}
@@ -157,7 +158,87 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure 
+      - destroy-environment:
+         workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}  
+      - slack/notify:
+          event: fail
+          mentions: '@EngineeringTeam'
+          template: basic_fail_1       
+
+  deploy-infrastructureOG:
+    docker:
+      # Docker image here that supports AWS CLI - must
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install tar
+          command: |
+            yum -y install tar gzip
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=udapeople-${CIRCLE_WORKFLOW_ID:0:4} \
+              --stack-name backend-${CIRCLE_WORKFLOW_ID:0:4} \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:4}
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople-${CIRCLE_WORKFLOW_ID:0:4} \
+              --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:4}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:4}"
+
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            echo "[web]" > .circleci/ansible/inventory.txt
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:4}" \
+              --output text >> .circleci/ansible/inventory.txt
+            curl -H "Content-Type: text/plain" -H "token: 2864ca35-793c-4295-9166-6eeb9b253b4c" \
+              --request PUT \
+              --data `aws ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --filters "Name=tag:project,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:4}" \
+                --output text` \
+              https://api.memstash.io/values/hosts-deployed-${CIRCLE_WORKFLOW_ID:0:4}
+              echo URL: https://api.memstash.io/values/hosts-deployed-${CIRCLE_WORKFLOW_ID:0:4}
+              echo Token: 2864ca35-793c-4295-9166-6eeb9b253b4c
+      - run:
+          name: Add .env vars to backend distro
+          command: |
+            echo ENVIRONMENT=development > backend/.env
+            echo TYPEORM_CONNECTION=postgres >> backend/.env
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
+            echo TYPEORM_HOST=$TYPEORM_HOST >> backend/.env
+            echo TYPEORM_PORT=$TYPEORM_PORT >> backend/.env
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> backend/.env
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> backend/.env
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> backend/.env
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+            echo NODE_ENV=development >> "backend/.env"
+      - restore_cache:
+          keys: [backend-build]
+      - persist_to_workspace:
+          root: ~/project
+          paths:
+            - .circleci/ansible/inventory.txt
+            - backend/
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}
+      - slack/notify:
+          branch_pattern: main
+          channel: C01R5RDMVC3
+          event: fail
+          template: basic_fail_1
 
 workflows:
   default:
