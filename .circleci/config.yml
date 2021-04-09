@@ -264,8 +264,9 @@ jobs:
 workflows:
   default:
     jobs:
-#      - build-frontend:
-#            context: slack-secrets
+      - deploy-infrastructure
+      - build-frontend:
+            context: slack-secrets
       - build-backendOG:
             context: slack-secrets
 #      - test-frontend:
@@ -276,7 +277,5 @@ workflows:
 #          requires: [build-frontend]
       - scan-backend:
             requires: [build-backendOG] 
-#      - deploy-infrastructure:
-#           requires:
-#             - build-backend
+
       
