@@ -232,8 +232,6 @@ jobs:
           paths:
             - .circleci/ansible/inventory.txt
             - backend/
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:4}
       - slack/notify:
           branch_pattern: main
           channel: C01R5RDMVC3
